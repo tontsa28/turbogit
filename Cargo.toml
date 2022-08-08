@@ -3,8 +3,22 @@ name = "turbogit"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "turbogit"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
+
+[profile.dev]
+opt-level = 0
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 rayon = "1.5.3"
+thiserror = "1.0.32"
 num_cpus = "1.13.1"
+glob = "0.3.0"
