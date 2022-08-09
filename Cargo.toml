@@ -19,6 +19,7 @@ opt-level = 0
 
 [dependencies]
 rayon = "1.5.3"
+clap = { version = "3.2.16", features = ["derive"] }
 thiserror = "1.0.32"
 num_cpus = "1.13.1"
 glob = "0.3.0"

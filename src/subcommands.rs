@@ -1,5 +1,20 @@
 use std::{path::PathBuf, process::Command};
+use clap::{Parser, Subcommand};
 use crate::TurboGitResult;
+
+#[derive(Parser)]
+#[clap(author, version, about, long_about = None)]
+#[clap(propagate_version = true)]
+pub struct Cli {
+    #[clap(subcommand)]
+    pub command: Option<Commands>,
+}
+
+#[derive(Subcommand)]
+pub enum Commands {
+    Fetch,
+    Pull,
+}
 
 // Fetch subcommand
 pub fn fetch(repo: &PathBuf) -> TurboGitResult<()> {
