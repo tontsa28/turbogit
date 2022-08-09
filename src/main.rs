@@ -1,28 +1,20 @@
-use std::{path::PathBuf, process::Command};
 use rayon::ThreadPoolBuilder;
-use crate::error::TurboGitError;
+use crate::{subcommands::fetch, error::TurboGitError};
 
 pub mod error;
+pub mod subcommands;
 
+// TurboGitResult type
 pub type TurboGitResult<T> = Result<T, TurboGitError>;
 
 fn main() -> TurboGitResult<()> {
     let cpus = num_cpus::get();
     let pool = ThreadPoolBuilder::new().num_threads(cpus).build()?;
+    let dir = glob::glob("[!.]*/").unwrap();
     
-    for repo in glob::glob("[!.]*/").unwrap() {
-        match repo {
-            Ok(path) => {
-                pool.install(|| fetch(&path).unwrap())
-            }
-            Err(e) => println!("{}", e),
-        }
+    for repo in dir {
+        let repo = repo?;
+        pool.install(|| fetch(&repo).unwrap());
     }
-    Ok(())
-}
-
-fn fetch(repo: &PathBuf) -> TurboGitResult<()> {
-    let fetch = Command::new("git").current_dir(repo).arg("fetch").output()?;
-    println!("{:?}", fetch);
     Ok(())
 }
