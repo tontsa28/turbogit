@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::Command};
+use std::process::{Command, Stdio};
 use clap::{Parser, Subcommand};
 use crate::TurboGitResult;
 
@@ -17,25 +17,66 @@ pub enum Commands {
 }
 
 // Fetch subcommand
-pub fn fetch(repo: &PathBuf) -> TurboGitResult<()> {
-    let fetch = Command::new("git").current_dir(repo).arg("fetch").output()?;
+pub fn fetch() -> TurboGitResult<()> {
+    // Check for directories in the current working directory
+    let dir = glob::glob("[!.]*/").unwrap();
+    let mut children = Vec::new();
 
-    if fetch.status.success() {
-        println!("Successfully fetched {}", repo.display());
-    } else {
-        println!("Failed to fetch {}", repo.display());
+    // Spawn a new git process for every repository
+    for repo in dir {
+        let repo = repo?;
+        let child = Command::new("git")
+            .current_dir(repo)
+            .arg("fetch")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped()).spawn()?;
+        children.push(child);
+    }
+
+    // Wait for all git processes to complete
+    for mut child in children {
+        let status = child.wait()?;
+
+        // Check if processes succeeded
+        if status.success() {
+            println!("Successfully fetched");
+        } else {
+            println!("Failed to fetch");
+        }
     }
     Ok(())
 }
 
 // Pull subcommand
-pub fn pull(repo: &PathBuf) -> TurboGitResult<()> {
-    let pull = Command::new("git").current_dir(repo).arg("pull").output()?;
+pub fn pull() -> TurboGitResult<()> {
+    // Check for directories in the current working directory
+    let dir = glob::glob("[!.]*/").unwrap();
+    let mut children = Vec::new();
 
-    if pull.status.success() {
-        println!("Successfully pulled {}", repo.display());
-    } else {
-        println!("Failed to pull {}", repo.display());
+    // Spawn a new git process for every repository
+    for repo in dir {
+        let repo = repo?;
+        let child = Command::new("git")
+            .current_dir(repo)
+            .arg("pull")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()?;
+        children.push(child);
+    }
+
+    // Wait for all git processes to complete
+    for mut child in children {
+        let status = child.wait()?;
+
+        // Check if processes succeeded
+        if status.success() {
+            println!("Successfully pulled");
+        } else {
+            println!("Failed to pull");
+        }
     }
     Ok(())
 }

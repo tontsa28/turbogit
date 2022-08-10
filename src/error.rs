@@ -5,7 +5,5 @@ pub enum TurboGitError {
     #[error("{}", 0)]
     IOError(#[from] std::io::Error),
     #[error("{}", 0)]
-    ThreadPoolBuildError(#[from] rayon::ThreadPoolBuildError),
-    #[error("{}", 0)]
     GlobError(#[from] glob::GlobError),
 }
