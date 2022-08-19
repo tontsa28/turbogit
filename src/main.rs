@@ -1,8 +1,8 @@
 use clap::Parser;
-use crate::{subcommands::{fetch, pull, Cli, Commands}, error::TurboGitError};
+use crate::{commands::{fetch::fetch, pull::pull, Cli, Commands}, error::TurboGitError};
 
 mod error;
-mod subcommands;
+mod commands;
 
 // TurboGitResult type
 pub type TurboGitResult<T> = Result<T, TurboGitError>;
